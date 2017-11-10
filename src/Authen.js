@@ -38,6 +38,26 @@ this.setState({err:err});
 
 }
 
+google(){
+console.log("I am in the google provider")
+
+let provider = new firebase.auth.GoogleAuthProvider();
+let promise = firebase.auth().signInWithPopup(provider);
+promise.then( result =>{
+  let user = result.user;
+  console.log(result);
+  firebase.database().ref('users/' + user.uid).set({
+    email:user.email,
+    name:user.displayName
+  });
+});
+promise.catch(e =>{
+  let msg = e.message;
+  console.log(msg);
+});
+
+}
+
 signUp(){
   const email = this.refs.email.value;
   const password = this.refs.password.value;
@@ -79,6 +99,7 @@ lout.classList.add('hide');
     this.login = this.login.bind(this);
     this.signUp = this.signUp.bind(this);
     this.logOut = this.logOut.bind(this);
+    this.google = this.google.bind(this);
   }
   render(){
     return(
@@ -88,7 +109,8 @@ lout.classList.add('hide');
       <p>{this.state.err}</p>
       <button onClick={this.login}>Log In</button>
       <button onClick={this.signUp}>Sign Up</button>
-      <button id='logout' className='hide' onClick={this.logOut}>Log Out</button>
+      <button id='logout' className='hide' onClick={this.logOut}>Log Out</button> <br />
+      <button id='google' className='google' onClick={this.google}>Sign in with Google</button>
       </div>
     );
   }
